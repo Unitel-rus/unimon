@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telemonitor
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telemonitor
+  template:
+    metadata:
+      labels:
+        app: telemonitor
+    spec:
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - name: telemonitor
+        image: ghcr.io/bboysoulcn/telemonitor:latest
+        imagePullPolicy: Always
+        env:
+        - name: TG_CHAT_ID
+          value: your_chat_id
+        - name: TG_API_TOKEN
+          value: your_api_token
+        - name: CPU_PERCENT
+          value: "80"
+        - name: MEMORY_PERCENT
+          value: "80"
+        - name: DISK_PERCENT
+          value: "80"
+        - name: MONITOR_INTERVAL
+          value: "300"
+        - name: TG_API_BASE_URL
+          value: "https://api.telegram.org/bot"
+        - name: DISK_PATH
+          value: "/host"
+        - name: URL_LIST
+          value: "https://www.baidu.com,https://www.google.com,https://www.bing.com"
+        - name: LANGUAGE
+          value: "cn"
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: host
+          mountPath: /host
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host
+        hostPath:
+          path: /
